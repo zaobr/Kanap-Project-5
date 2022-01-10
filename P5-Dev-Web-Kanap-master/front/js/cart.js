@@ -1,6 +1,6 @@
 const cartItems = document.getElementById("cart__items");
 
-fetch(`http://localhost:3000/api/products/${localStorage.getItem("id")}`)
+fetch(`http://localhost:3000/api/products/${searchParam}`)
     .then(response => response.json())
     .then(data => { cartItems.innerHTML = 
         `<article class="cart__item" data-id="${localStorage.getItem("id")}" data-color="${localStorage.getItem("color")}">
