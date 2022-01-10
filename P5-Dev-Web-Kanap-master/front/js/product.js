@@ -39,8 +39,9 @@ function toCart(id, color, quantity) {
             cart[index].quantity = parseInt(cart[index].quantity) + parseInt(quantity.value);
         }
         else{
-            cart.push({id: id, color: color.value, quantity: quantity.value});
+            cart.push(new Object({id: id, color: color.value, quantity: quantity.value}));
         }
+        console.log(cart);
         localStorage.setItem("cart", JSON.stringify(cart));
     }
 }

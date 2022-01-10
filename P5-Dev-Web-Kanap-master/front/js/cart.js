@@ -1,8 +1,12 @@
 const cartItems = document.getElementById("cart__items");
+const cartList = JSON.parse(localStorage.getItem("cart"));
 
 fetch(`http://localhost:3000/api/products/${searchParam}`)
     .then(response => response.json())
-    .then(data => { cartItems.innerHTML = 
+    .then(data => {displayCartItems(data)});
+
+function displayCartItems(data) {
+  cartItems.innerHTML = 
         `<article class="cart__item" data-id="${localStorage.getItem("id")}" data-color="${localStorage.getItem("color")}">
         <div class="cart__item__img">
           <img src="${data.imageUrl}" alt="${data.altTxt}">
@@ -24,4 +28,4 @@ fetch(`http://localhost:3000/api/products/${searchParam}`)
           </div>
         </div>
       </article>`  
-});
+}
