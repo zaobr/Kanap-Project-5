@@ -2,8 +2,7 @@ const searchParam = new URLSearchParams(window.location.search).get("id");
 const itemColors = document.getElementById("colors");
 const itemQuantity = document.getElementById("quantity");
 const pushCart = document.getElementById("addToCart");
-
-const cart = [];
+const cart = new Array();
 
 fetch(`http://localhost:3000/api/products/${searchParam}`)
     .then(response => response.json())
@@ -41,7 +40,7 @@ function toCart(id, color, quantity) {
         else{
             cart.push(new Object({id: id, color: color.value, quantity: quantity.value}));
         }
-        console.log(cart);
+        JSON.parse(localStorage.getItem("cart"));
         localStorage.setItem("cart", JSON.stringify(cart));
     }
 }
