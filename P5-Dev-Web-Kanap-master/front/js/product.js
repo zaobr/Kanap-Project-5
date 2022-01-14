@@ -9,6 +9,12 @@ fetch(`http://localhost:3000/api/products/${searchParam}`)
     .then(data => {postData(data)}
 );
 
+if (localStorage.getItem("cart")) {
+    for (const element of JSON.parse(localStorage.getItem("cart"))) {
+        cart.push(element);
+    }
+}
+
 pushCart.addEventListener("click", function(){
     toCart(searchParam, itemColors, itemQuantity)
 });
@@ -38,9 +44,8 @@ function toCart(id, color, quantity) {
             cart[index].quantity = parseInt(cart[index].quantity) + parseInt(quantity.value);
         }
         else{
-            cart.push(new Object({id: id, color: color.value, quantity: quantity.value}));
+            cart.push(new Object({id: id, color: color.value, quantity: parseInt(quantity.value)}));
         }
-        JSON.parse(localStorage.getItem("cart"));
         localStorage.setItem("cart", JSON.stringify(cart));
     }
 }
