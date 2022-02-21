@@ -1,24 +1,29 @@
-const cartList = JSON.parse(localStorage.getItem("cart"));
+const articles = JSON.parse(localStorage.getItem("cart"));;
+const cartItems = document.getElementById("cart__items");
 const totalQuantity = document.getElementById("totalQuantity");
-let x = Number();
-const articles = [];
+const totalPrice = document.getElementById("totalPrice");
 totalQuantity.innerHTML = 0;
+totalPrice.innerHTML = 0;
+let x = 0;
+let y = 0;
 
-for (const article of cartList) {
-  articles.push(article);
-}
+displayData();
 
-for (let index in articles) {
-  displayData(index);
-  x += parseInt(articles[index].quantity);
+
+function displayData() {
+  for (let index in articles) {
+    fetch(`http://localhost:3000/api/products/${articles[index].id}`)
+    .then(response => response.json())
+    .then(data => {displayItems(data, index)});
+    x += parseInt(articles[index].quantity);
+    y += parseInt(articles[index].quantity) * parseInt(articles[index].price);
+  }
   totalQuantity.innerHTML = x;
+  totalPrice.innerHTML = y;
 }
 
-function displayData(index) {
-  const cartItems = document.getElementById("cart__items");
-  fetch(`http://localhost:3000/api/products/${articles[index].id}`)
-  .then(response => response.json())
-  .then(data => {cartItems.innerHTML += `<article class="cart__item" data-id="${data._id}" data-color="${articles[index].color}">
+function displayItems(data, index) {
+  cartItems.innerHTML += `<article class="cart__item">
     <div class="cart__item__img">
     <img src="${data.imageUrl}" alt="${data.altTxt}">
     </div>
@@ -34,18 +39,19 @@ function displayData(index) {
     <input type="number" class="itemQuantity" onClick="modifyQuantity(${index})" name="itemQuantity" min="1" max="100" value="${articles[index].quantity}">
     </div>
     <div class="cart__item__content__settings__delete">
-    <p class="deleteItem" onClick="deleteItem(${index}, ${1})">Supprimer</p>
+    <p class="deleteItem" onClick="deleteItem(${index})">Supprimer</p>
     </div>
     </div>
     </div>
-    </article>`
-  })
-}
+    </article>`;
+  }
 
 function deleteItem(index){
   articles.splice(index, 1);
-  localStorage.setItem("cart", JSON.stringify(articles))
-  location.reload();
+  localStorage.setItem("cart", JSON.stringify(articles));
+  cartItems.innerHTML = "";
+  displayData();
+  x = 0;
 };
 
 // function modifyQuantity(index){
