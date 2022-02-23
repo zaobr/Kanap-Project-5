@@ -1,6 +1,7 @@
 const searchParam = new URLSearchParams(window.location.search).get("id");
 const itemColors = document.getElementById("colors");
 const itemQuantity = document.getElementById("quantity");
+const productPrice = document.getElementById("price");
 const pushCart = document.getElementById("addToCart");
 const cart = new Array();
 
@@ -16,25 +17,24 @@ if (localStorage.getItem("cart")) {
 }
 
 pushCart.addEventListener("click", function(){
-    toCart(searchParam, itemColors, itemQuantity)
+    toCart(searchParam, itemColors, itemQuantity, productPrice)
 });
 
 function postData(data) {
     const itemImg = document.querySelector(".item__img");
     const title = document.getElementById("title");
-    const price = document.getElementById("price");
     const description = document.getElementById("description");
 
     itemImg.innerHTML = `<img src="${data.imageUrl}" alt=${data.altTxt}>`;
     title.innerHTML = data.name;
-    price.innerHTML = data.price;
+    productPrice.innerHTML = data.price;
     description.innerHTML = data.description;
     for(color of data.colors){
         itemColors.innerHTML += `<option value="${color}">${color}</option>`;
     };
 }
 
-function toCart(id, color, quantity) {
+function toCart(id, color, quantity, price) {
     if((!quantity.value || quantity.value == "null" || quantity.value == 0) || (!color.value || (color.value == "" && color.value == "null"))){
         alert("Vérifier votre séléction de couleur ainsi que la quantité séléctionnée.");
     }
@@ -44,7 +44,7 @@ function toCart(id, color, quantity) {
             cart[index].quantity = parseInt(cart[index].quantity) + parseInt(quantity.value);
         }
         else{
-            cart.push(new Object({id: id, color: color.value, quantity: parseInt(quantity.value)}));
+            cart.push(new Object({id: id, color: color.value, quantity: parseInt(quantity.value), price: price.innerText}));
         }
         localStorage.setItem("cart", JSON.stringify(cart));
     }
