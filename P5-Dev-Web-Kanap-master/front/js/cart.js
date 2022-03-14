@@ -1,5 +1,6 @@
 const articles = JSON.parse(localStorage.getItem("cart"));;
 const cartItems = document.getElementById("cart__items");
+const cartParent = document.querySelector(".cart");
 const totalQuantity = document.getElementById("totalQuantity");
 const totalPrice = document.getElementById("totalPrice");
 totalQuantity.innerHTML = 0;
@@ -8,7 +9,6 @@ let x = 0;
 let y = 0;
 
 displayData();
-
 
 function displayData() {
   for (let index in articles) {
@@ -45,12 +45,15 @@ function displayItems(data, index) {
     </div>
     </div>
     </article>`;
-  }
+}
 
 function deleteItem(index){
+  var oldChild = cartParent.removeChild(cartItems);
+
   articles.splice(index, 1);
   localStorage.setItem("cart", JSON.stringify(articles));
-  cartItems.innerHTML = "";
+  cartParent.removeChild(cartItems);
+  cartItems.innerHTML = oldChild
   x = 0;
   y = 0;
   displayData();
@@ -59,8 +62,66 @@ function deleteItem(index){
 function modifyQuantity(index, itemQuantity){
   articles[index].quantity = parseInt(itemQuantity.value);
   localStorage.setItem("cart", JSON.stringify(articles));
-  cartItems.innerHTML = "";
   x = 0;
   y = 0;
   displayData();
 }
+
+const form = document.querySelector(".cart__order__form");
+const customerInfo = {};
+const orderRecap = {};
+
+form.addEventListener('click', (e) => {
+  // e.preventDefault()
+  checkError()
+  // if (checkError) {
+  //   customerInfo = {prenom: firstName.value, nom: lastName.value, adresse: address.value, ville: city.value, email: email.value};
+  //   orderRecap = {contact: customerInfo, products: articles};
+  //   localStorage.setItem("Recap", JSON.stringify(orderRecap));
+  // }
+})
+
+function checkError(){
+  const errorMessage = document.querySelectorAll('div.cart__order__form__question > p');
+  let err = 0;
+
+  for (let errors of errorMessage) {
+    if(errors.innerText.length != 0){
+      err++;
+      console.log(err);
+    }
+  }
+
+  if(err == 0){
+    return true;
+  }
+  else{
+    return false
+  }
+}
+
+
+document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(el => {
+  el.addEventListener('change', (e) => {
+    if((el.value == "" || el.value == null || el.value == " ")){
+      el.nextElementSibling.innerHTML = "Veuillez vérifier les informations renseignées.";
+    }
+    else{
+      el.nextElementSibling.innerHTML = "";
+    }
+  });
+});
+
+document.getElementById("email").addEventListener('change', (e) => {
+  let r1 = /\S+@\S+\.\S+/;
+  let emailVerif = r1.test(e.target.value);
+
+  if(!emailVerif){
+    e.target.nextElementSibling.innerHTML = "Veuillez vérifier le format de l'adresse email.";
+    return false;
+  }
+  else{
+    e.target.nextElementSibling.innerHTML = "";
+    return true;
+  }
+});
