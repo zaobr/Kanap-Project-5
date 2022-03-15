@@ -24,7 +24,7 @@ function displayData() {
 
 function displayItems(data, index) {
   const itemQuantity = document.querySelector(".itemQuantity");
-  cartItems.innerHTML += `<article class="cart__item">
+  document.getElementById("cart__items").innerHTML += `<article class="cart__item">
     <div class="cart__item__img">
     <img src="${data.imageUrl}" alt="${data.altTxt}">
     </div>
@@ -48,12 +48,13 @@ function displayItems(data, index) {
 }
 
 function deleteItem(index){
-  var oldChild = cartParent.removeChild(cartItems);
-
+  // Stockage du node contenant les articles dans la variable oldChild - résultat: suppression/stockage réussi
+  const oldChild = document.querySelector(".cart").removeChild(document.getElementById("cart__items"));
+  // Suppression dans le localstorage de l'article ciblé par l'index - résultat: suppression réussie
   articles.splice(index, 1);
   localStorage.setItem("cart", JSON.stringify(articles));
-  cartParent.removeChild(cartItems);
-  cartItems.innerHTML = oldChild
+  // Récupération du node contenant les articles et ré-affichage - résultat: la page reste vide, rien n'est ré-affiché
+  document.querySelector(".cart").appendChild(oldChild);
   x = 0;
   y = 0;
   displayData();
@@ -68,48 +69,38 @@ function modifyQuantity(index, itemQuantity){
 }
 
 const form = document.querySelector(".cart__order__form");
-const customerInfo = {};
-const orderRecap = {};
+let customerInfo = {};
+let orderRecap = {};
 
-form.addEventListener('click', (e) => {
-  // e.preventDefault()
-  checkError()
-  // if (checkError) {
-  //   customerInfo = {prenom: firstName.value, nom: lastName.value, adresse: address.value, ville: city.value, email: email.value};
-  //   orderRecap = {contact: customerInfo, products: articles};
-  //   localStorage.setItem("Recap", JSON.stringify(orderRecap));
-  // }
+form.addEventListener('submit', (e) => {
+  e.preventDefault()
+  let error = false;
+  document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(input => {
+    if(!checkInput(input)){
+      error = true;
+    }
+  });
+  if(!error){
+    customerInfo = {firstName: firstName.value, lastName: lastName.value, address: address.value, city: city.value, email: email.value};
+    orderRecap = {contact: customerInfo, products: articles};
+    localStorage.setItem("Recap", JSON.stringify(orderRecap));
+  }
 })
 
-function checkError(){
-  const errorMessage = document.querySelectorAll('div.cart__order__form__question > p');
-  let err = 0;
-
-  for (let errors of errorMessage) {
-    if(errors.innerText.length != 0){
-      err++;
-      console.log(err);
-    }
-  }
-
-  if(err == 0){
-    return true;
+function checkInput(input){
+  if((input.value == "" || input.value == null || input.value == " ")){
+    input.nextElementSibling.innerHTML = "Veuillez vérifier les informations renseignées.";
+    return false;
   }
   else{
-    return false
+    input.nextElementSibling.innerHTML = "";
+    return true;
   }
 }
 
 
-document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(el => {
-  el.addEventListener('change', (e) => {
-    if((el.value == "" || el.value == null || el.value == " ")){
-      el.nextElementSibling.innerHTML = "Veuillez vérifier les informations renseignées.";
-    }
-    else{
-      el.nextElementSibling.innerHTML = "";
-    }
-  });
+document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(input => {
+  input.addEventListener('change', (e) => {checkInput(input)});
 });
 
 document.getElementById("email").addEventListener('change', (e) => {
