@@ -1,3 +1,4 @@
+// Execute le code suivant seulement si je me trouve sur la page Cart
 if (document.querySelector("title").text == "Cart") {
   const articles = JSON.parse(localStorage.getItem("cart"));;
   const cartItems = document.getElementById("cart__items");
@@ -7,13 +8,14 @@ if (document.querySelector("title").text == "Cart") {
   let products = [];
   let contact = {};
   let order = {};
+
+  // Initialisation des valeurs avant manipulation
   let x = 0;
   let y = 0;
   totalQuantity.innerHTML = 0;
   totalPrice.innerHTML = 0;
   
-  displayData();
-  
+  // Récupération des articles depuis localStorage et caractéristique associés depuis l'API. Affichage du contenu via la fonction displayItems()
   function displayData() {
     products.length = 0;
     while(cartItems.firstChild){
@@ -32,7 +34,9 @@ if (document.querySelector("title").text == "Cart") {
     }
     totalQuantity.innerHTML = x;
   }
+  displayData();
   
+  // Affichage du contenu du panier via les données récupéres avec le paramétre data et l'ordre des articles du panier via index
   function displayItems(data, index) {
     const itemQuantity = document.querySelector(".itemQuantity");
     cartItems.innerHTML += `<article class="cart__item">
@@ -58,6 +62,7 @@ if (document.querySelector("title").text == "Cart") {
       </article>`;
   }
   
+  // Suppression des articles du panier via son index ainsi que du localStorage avant re-affichage des articles
   function deleteItem(index){
     const oldChild = document.querySelector(".cart").removeChild(document.getElementById("cart__items"));
     articles.splice(index, 1);
@@ -68,6 +73,7 @@ if (document.querySelector("title").text == "Cart") {
     displayData();
   };
   
+  // Modification de la quantité affichée et stockée d'un article du panier via son index ainsi que dans le localStorage avant re-affichage des articles
   function modifyQuantity(index, itemQuantity){
     articles[index].quantity = parseInt(itemQuantity.value);
     localStorage.setItem("cart", JSON.stringify(articles));
@@ -75,22 +81,13 @@ if (document.querySelector("title").text == "Cart") {
     y = 0;
     displayData();
   }
-  
-  form.addEventListener('submit', (e) => {
-    e.preventDefault()
-    let error = false;
-    document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(input => {
-      if(!checkInput(input)){
-        error = true;
-      }
-    });
-    if(!error && articles.length > 0){
-      contact = {firstName: firstName.value, lastName: lastName.value, address: address.value, city: city.value, email: email.value};
-      order = {contact: contact, products: products};
-      getOrderId();
-    }
-  })
-  
+
+  // Vérification des champs texte du formulaire via la fonction checkInput()
+  document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(input => {
+    input.addEventListener('change', (e) => {checkInput(input)});
+  });
+
+  // Vérification du contenu entrés dans les champs du formulaire avant envoi (renvoi true si affichage de message d'erreur et false si tout se déroule bien)
   function checkInput(input){
     if((input.value == "" || input.value == null || input.value == " ")){
       input.nextElementSibling.innerHTML = "Veuillez vérifier les informations renseignées.";
@@ -115,11 +112,7 @@ if (document.querySelector("title").text == "Cart") {
     }
   }
   
-  
-  document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(input => {
-    input.addEventListener('change', (e) => {checkInput(input)});
-  });
-  
+  // Vérification du contenu du champ email (renvoi true si affichage de message d'erreur et false si tout se déroule bien)
   document.getElementById("email").addEventListener('change', (e) => {
     let r1 = /\S+@\S+\.\S+/;
     let emailVerif = r1.test(e.target.value);
@@ -133,7 +126,24 @@ if (document.querySelector("title").text == "Cart") {
       return true;
     }
   });
+  
+  // Vérification de message d'erreur via la retour de checkInput(), envoi du formulaire et récupération du numéro de commande via getOrderId() avant redirection vers la page Confirmation
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    let error = false;
+    document.querySelectorAll('div.cart__order__form__question > input[type="text"]').forEach(input => {
+      if(!checkInput(input)){
+        error = true;
+      }
+    });
+    if(!error && articles.length > 0){
+      contact = {firstName: firstName.value, lastName: lastName.value, address: address.value, city: city.value, email: email.value};
+      order = {contact: contact, products: products};
+      getOrderId();
+    }
+  })
 
+  // Envoi du formulaire vers l'API et écupération du numéro de commande et affichage/redirection via la fonction displayOrderId
   function getOrderId(){
     fetch('http://localhost:3000/api/products/order', {
     method: 'POST',
@@ -146,12 +156,16 @@ if (document.querySelector("title").text == "Cart") {
   .then(data => {displayOrderId(data)})
   }
   
+  // Redirection vers la page Confirmation et ajout du numéro de commande retourné par l'API dans l'URL de destination
   function displayOrderId(data) {
     let url = "http://127.0.0.1:5500/Ouhabmehdi_5_25122021/P5-Dev-Web-Kanap-master/front/html/confirmation.html?orderId=" + data.orderId;
     window.location.href = url;
   }
 }
+
+// Execute le code suivant seulement si je me trouve sur la page Confirmation
 else{
+  // Affichage du numéro de commande
   let params = new URLSearchParams(window.location.search);
   document.getElementById("orderId").innerHTML = params.get("orderId");
 }
