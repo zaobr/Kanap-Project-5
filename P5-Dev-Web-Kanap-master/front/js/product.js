@@ -5,13 +5,13 @@ const productPrice = document.getElementById("price");
 const pushCart = document.getElementById("addToCart");
 const cart = new Array();
 
-// Requête vers l'API de récupération des données correspondant à l'ID du produit via l'URL et affichage via la fonction postData(data)
+// Requête vers l'API de récupération des données correspondant à l'ID du produit via l'URL et affichage via la fonction postData()
 fetch(`http://localhost:3000/api/products/${searchParam}`)
     .then(response => response.json())
     .then(data => {postData(data)}
 );
  
-// Affichage des données récupérés depuis l'API via le paramètre data
+// Affichage des données récupérés depuis l'API via le parametre data
 function postData(data) {
     const itemImg = document.querySelector(".item__img");
     const title = document.getElementById("title");
