@@ -22,13 +22,15 @@ if (document.querySelector("title").text == "Cart") {
     for (let index in articles) {
       fetch(`http://localhost:3000/api/products/${articles[index].id}`)
       .then(response => response.json())
-      .then(data => {displayItems(data, index)});
+      .then(data => {
+        displayItems(data, index);
+        y += (parseInt(articles[index].quantity) * parseInt(data.price));
+        totalPrice.innerHTML = y;
+      });
       x += parseInt(articles[index].quantity);
-      y += (parseInt(articles[index].quantity) * parseInt(articles[index].price));
-      products.push(articles[index].id)
+      products.push(articles[index].id);
     }
     totalQuantity.innerHTML = x;
-    totalPrice.innerHTML = y;
   }
   
   function displayItems(data, index) {
@@ -149,6 +151,7 @@ if (document.querySelector("title").text == "Cart") {
     window.location.href = url;
   }
 }
-
-let params = new URLSearchParams(window.location.search);
-document.getElementById("orderId").innerHTML = params.get("orderId");
+else{
+  let params = new URLSearchParams(window.location.search);
+  document.getElementById("orderId").innerHTML = params.get("orderId");
+}

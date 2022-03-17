@@ -34,7 +34,7 @@ function postData(data) {
     };
 }
 
-function toCart(id, color, quantity, price) {
+function toCart(id, color, quantity) {
     if((!quantity.value || quantity.value == "null" || quantity.value == 0) || (!color.value || (color.value == "" && color.value == "null"))){
         alert("Vérifier votre séléction de couleur ainsi que la quantité séléctionnée.");
     }
@@ -44,7 +44,7 @@ function toCart(id, color, quantity, price) {
             cart[index].quantity = parseInt(cart[index].quantity) + parseInt(quantity.value);
         }
         else{
-            cart.push(new Object({id: id, color: color.value, quantity: parseInt(quantity.value), price: price.innerText}));
+            cart.push(new Object({id: id, color: color.value, quantity: parseInt(quantity.value)}));
         }
         localStorage.setItem("cart", JSON.stringify(cart));
     }
