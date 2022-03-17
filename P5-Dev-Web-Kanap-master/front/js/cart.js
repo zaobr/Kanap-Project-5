@@ -95,8 +95,21 @@ if (document.querySelector("title").text == "Cart") {
       return false;
     }
     else{
-      input.nextElementSibling.innerHTML = "";
-      return true;
+      if(input.name == "firstName"|| input.name == "lastName"){
+        let r2 = /^[a-zA-Z]+$/;
+        let inputVerif = r2.test(input.value)
+        if(!inputVerif){
+          input.nextElementSibling.innerHTML = "Caractères incorrects. Veuillez entrer seulement des lettres.";
+        }
+        else{
+          input.nextElementSibling.innerHTML = "";
+          return true;
+        }
+      }
+      else{
+        input.nextElementSibling.innerHTML = "";
+        return true;
+      }
     }
   }
   
