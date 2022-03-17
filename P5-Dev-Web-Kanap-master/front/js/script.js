@@ -1,5 +1,6 @@
 const items = document.querySelector('.items');
 
+// Requête vers l'API pour récupération de l'ensemble des produits et affichage.
 fetch('http://localhost:3000/api/products')
     .then(response => response.json())
     .then(data => {
