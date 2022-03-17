@@ -158,7 +158,7 @@ if (document.querySelector("title").text == "Cart") {
   
   // Redirection vers la page Confirmation et ajout du numéro de commande retourné par l'API dans l'URL de destination
   function displayOrderId(data) {
-    let url = "http://127.0.0.1:5500/Ouhabmehdi_5_25122021/P5-Dev-Web-Kanap-master/front/html/confirmation.html?orderId=" + data.orderId;
+    let url = "../html/confirmation.html?orderId=" + data.orderId;
     window.location.href = url;
   }
 }
